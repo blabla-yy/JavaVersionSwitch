@@ -13,6 +13,7 @@
 		7581E79828D876EC0004FE0A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7581E79728D876EC0004FE0A /* Preview Assets.xcassets */; };
 		7581E79A28D876EC0004FE0A /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7581E79928D876EC0004FE0A /* Persistence.swift */; };
 		7581E79D28D876EC0004FE0A /* JavaVersionSwitch.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7581E79B28D876EC0004FE0A /* JavaVersionSwitch.xcdatamodeld */; };
+		7581E7A628D877480004FE0A /* JavaEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7581E7A528D877480004FE0A /* JavaEnvironment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		7581E79928D876EC0004FE0A /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		7581E79C28D876EC0004FE0A /* JavaVersionSwitch.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = JavaVersionSwitch.xcdatamodel; sourceTree = "<group>"; };
 		7581E79E28D876EC0004FE0A /* JavaVersionSwitch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JavaVersionSwitch.entitlements; sourceTree = "<group>"; };
+		7581E7A528D877480004FE0A /* JavaEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaEnvironment.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 		7581E78F28D876E90004FE0A /* JavaVersionSwitch */ = {
 			isa = PBXGroup;
 			children = (
+				7581E7A428D8771E0004FE0A /* Core */,
 				7581E79028D876E90004FE0A /* JavaVersionSwitchApp.swift */,
 				7581E79228D876E90004FE0A /* ContentView.swift */,
 				7581E79428D876EC0004FE0A /* Assets.xcassets */,
@@ -73,6 +76,14 @@
 				7581E79728D876EC0004FE0A /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		7581E7A428D8771E0004FE0A /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				7581E7A528D877480004FE0A /* JavaEnvironment.swift */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,6 +159,7 @@
 				7581E79D28D876EC0004FE0A /* JavaVersionSwitch.xcdatamodeld in Sources */,
 				7581E79A28D876EC0004FE0A /* Persistence.swift in Sources */,
 				7581E79328D876E90004FE0A /* ContentView.swift in Sources */,
+				7581E7A628D877480004FE0A /* JavaEnvironment.swift in Sources */,
 				7581E79128D876E90004FE0A /* JavaVersionSwitchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
