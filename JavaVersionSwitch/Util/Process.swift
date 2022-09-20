@@ -45,7 +45,7 @@ struct ProcessUtil {
                 errorData += line
             }
         }
-        //TODO
+        //TODO 部分错误这样没法获取
         process.waitUntilExit()
         if process.terminationStatus == 0 {
             return ProcessResult(hasError: false, data: outData)

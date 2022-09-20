@@ -10,11 +10,19 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State var isTargeted = false
-    private var manager = JavaEnvironmentMannager()
+    @ObservedObject private var manager = JavaEnvironmentMannager()
 
     var body: some View {
         List {
-            Text("hello")
+            ForEach(manager.all) { item in
+                VStack {
+                    Text(item.version)
+                    
+                }
+                .frame(minHeight: 100)
+                .background(Color.red)
+                
+            }
         }
         .frame(minWidth: 200, minHeight: 400)
         .onDrop(of: [.fileURL], isTargeted: $isTargeted, perform: self.dropDelegate)
@@ -31,7 +39,7 @@ struct ContentView: View {
                         return
                     }
                     Logger.shared.info("add url: \(url)")
-                    try await manager.add(url: url)
+                    _ = try await manager.add(url: url)
                 }
             } catch {
                 Logger.shared.error("open file error, \(error.localizedDescription)")
@@ -40,6 +48,4 @@ struct ContentView: View {
         }
         return true
     }
-
 }
-
