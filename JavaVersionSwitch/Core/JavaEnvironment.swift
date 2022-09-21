@@ -14,14 +14,17 @@ class JavaEnvironmentMannager: ObservableObject {
 }
 
 struct JavaEnvironment {
-    let fullPath: String
+    let home: String
     let version: String
     let specificationVersion: String
     let vmName: String
+    let rtName: String
+    
+    static let mock = JavaEnvironment(home: "/path", version: "1.8.0_202", specificationVersion: "1.8", vmName: "OpenJDK", rtName: "Java(TM) SE Runtime Environment")
 }
 extension JavaEnvironment: Identifiable {
     var id: String {
-        fullPath
+        home
     }
 }
 
@@ -68,12 +71,55 @@ extension JavaEnvironmentMannager {
             throw JError.executeCmdError
         }
 
-        let env = JavaEnvironment(fullPath: url.path,
+        let env = JavaEnvironment(home: url.path,
                                   version: rtVersionResult.data.trimmingCharacters(in: .whitespacesAndNewlines),
                                   specificationVersion: specResult.data.trimmingCharacters(in: .whitespacesAndNewlines),
-                                  vmName: vmNameResult.data.trimmingCharacters(in: .whitespacesAndNewlines)
+                                  vmName: vmNameResult.data.trimmingCharacters(in: .whitespacesAndNewlines),
+                                  rtName: ""
         )
         self.all.append(env)
         return env
+    }
+}
+
+
+extension JavaEnvironment {
+    static func parse(propertiesCmdOut: String) -> JavaEnvironment? {
+        if propertiesCmdOut.isEmpty {
+            return nil
+        }
+        let lines = propertiesCmdOut.split(whereSeparator: \.isNewline)
+        
+        var version = ""
+        var specificationVersion = ""
+        var vmName = ""
+        var rtName = ""
+        var home = ""
+        for line in lines {
+            // 多行的不展示
+            let parts = line.split(separator: "=", maxSplits: 1)
+            if parts.isEmpty || parts.count != 2 {
+                continue
+            }
+            let key = parts[0].trimmingCharacters(in: .whitespaces)
+            let value = parts[1].trimmingCharacters(in: .whitespacesAndNewlines)
+            switch key {
+            case "java.version":
+                version = value
+            case "java.specification.version":
+                specificationVersion = value
+            case "java.vm.name":
+                vmName = value
+            case "java.runtime.name":
+                rtName = value
+            case "java.home":
+                home = value
+            default: break
+            }
+        }
+        if version.isEmpty || specificationVersion.isEmpty || home.isEmpty {
+            return nil
+        }
+        return JavaEnvironment(home: home, version: version, specificationVersion: specificationVersion, vmName: vmName, rtName: rtName)
     }
 }

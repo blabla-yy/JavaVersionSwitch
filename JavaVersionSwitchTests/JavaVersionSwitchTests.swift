@@ -22,10 +22,24 @@ final class JavaVersionSwitchTests: XCTestCase {
             print("Success: \(result)")
         }
     }
-    
+
     func testJavaEnvironmentMannagerAddExample() async throws {
         let env = JavaEnvironmentMannager()
-        try await env.add(url: URL.init(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home") )
+        try await env.add(url: URL(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home"))
+    }
+
+    func testParse() async throws {
+        let result = try await ProcessUtil.execute(shell: "java -XshowSettings:properties -version")
+        XCTAssert(!result.hasError)
+        if result.hasError {
+            return
+        }
+        let env = JavaEnvironment.parse(propertiesCmdOut: result.data)
+        XCTAssert(env != nil)
+        if env == nil {
+            return
+        }
+        print("env: \(env!)")
     }
 
     func testPerformanceExample() throws {
