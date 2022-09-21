@@ -27,16 +27,6 @@ final class JavaVersionSwitchTests: XCTestCase {
         let env = JavaEnvironmentMannager()
         try await env.add(url: URL.init(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home") )
     }
-    
-    func testFileNames() async throws {
-        let names = try Files.getFileNames(path: "/Users/wyy/Documents/")
-        print("files: \(names)")
-        XCTAssert(!names.isEmpty)
-    }
-
-    func testLink() async throws {
-        try Files.createLink(target: "/Users/wyy/Desktop/bin", source: "/Users/wyy/Documents/")
-    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
