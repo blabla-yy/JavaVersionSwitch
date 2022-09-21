@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 class JavaEnvironmentMannager: ObservableObject {
     @Published var current: JavaEnvironment?
     @Published var all: [JavaEnvironment] = []
@@ -22,6 +23,7 @@ struct JavaEnvironment {
     
     static let mock = JavaEnvironment(home: "/path", version: "1.8.0_202", specificationVersion: "1.8", vmName: "OpenJDK", rtName: "Java(TM) SE Runtime Environment")
 }
+
 extension JavaEnvironment: Identifiable {
     var id: String {
         home
@@ -49,6 +51,20 @@ extension JavaEnvironmentMannager {
         java -XshowSettings:properties -version 2>&1 | \
            awk -F= '$1~"java.vm.name" {sub(/^[ ]+/, "", $2); print $2}'
         """
+    static let javaHomeCmd =
+        """
+        java -XshowSettings:properties -version 2>&1 | \
+           awk -F= '$1~"java.home" {sub(/^[ ]+/, "", $2); print $2}'
+        """
+
+    func detectCurrentJavaEnvironment() async throws -> JavaEnvironment? {
+        let result = try await ProcessUtil.execute(shell: JavaEnvironmentMannager.javaHomeCmd)
+        if result.hasError || result.data.isEmpty {
+            return nil
+        }
+        self.current = try await add(url: URL(fileURLWithPath: result.data))
+        return self.current
+    }
 
     func add(url: URL) async throws -> JavaEnvironment {
         let javaPath = url.path + "/bin/"
@@ -77,7 +93,7 @@ extension JavaEnvironmentMannager {
                                   vmName: vmNameResult.data.trimmingCharacters(in: .whitespacesAndNewlines),
                                   rtName: ""
         )
-        self.all.append(env)
+        all.append(env)
         return env
     }
 }

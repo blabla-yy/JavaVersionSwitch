@@ -14,10 +14,10 @@ struct ContentView: View {
 
     var body: some View {
         List {
+            Button("检测当前环境", action: detectCurrentEnvironment)
             ForEach(manager.all) { item in
                 VStack {
                     Text(item.version)
-                    
                 }
                 .frame(minHeight: 100)
                 .background(Color.red)
@@ -26,6 +26,17 @@ struct ContentView: View {
         }
         .frame(minWidth: 200, minHeight: 400)
         .onDrop(of: [.fileURL], isTargeted: $isTargeted, perform: self.dropDelegate)
+    }
+    
+    func detectCurrentEnvironment() {
+        Task {
+            do {
+                _ = try await manager.detectCurrentJavaEnvironment()
+            } catch {
+                Logger.shared.error("open file error, \(error.localizedDescription)")
+                return
+            }
+        }
     }
 
     func dropDelegate(_ providers: [NSItemProvider]) -> Bool {
