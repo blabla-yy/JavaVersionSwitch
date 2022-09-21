@@ -1,0 +1,47 @@
+//
+//  Link.swift
+//  JavaVersionSwitch
+//
+//  Created by wyy on 2022/9/21.
+//
+
+import Foundation
+
+struct Files {
+    static func getFileNames(path: String) throws -> [String] {
+        var filePaths = [String]()
+        do {
+            let array = try FileManager.default.contentsOfDirectory(atPath: path)
+            for fileName in array {
+                var isDir: ObjCBool = true
+                if FileManager.default.fileExists(atPath: "\(path)/\(fileName)", isDirectory: &isDir) {
+                    if !isDir.boolValue {
+                        filePaths.append(fileName)
+                    }
+                }
+            }
+
+            if filePaths.isEmpty {
+                Logger.shared.info("\(path) no files")
+            }
+        } catch {
+            Logger.shared.error("get file names error \(error.localizedDescription)")
+            throw error
+        }
+        return filePaths
+    }
+
+    static func createLink(target: String, source: String) throws {
+        
+        do {
+            let fileNames = try getFileNames(path: source)
+
+            for fileName in fileNames {
+                try FileManager.default.createSymbolicLink(atPath: "\(target)/\(fileName)", withDestinationPath: "\(source)/\(fileName)")
+            }
+        } catch {
+            Logger.shared.error("createSymbolicLink error \(error.localizedDescription)")
+            throw error
+        }
+    }
+}
