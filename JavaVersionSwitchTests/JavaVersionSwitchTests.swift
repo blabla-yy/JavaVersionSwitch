@@ -17,24 +17,26 @@ final class JavaVersionSwitchTests: XCTestCase {
     }
 
     func testExample() async throws {
-        let result = try await ProcessUtil.execute(shell: "/opt/homebrew/opt/openjdk/bin/java --version")
-        if !result.hasError {
+        let result = try await ProcessUtil.execute(shell: "/opt/homebrew/opt/openjdk/bin/java --version").result.get()
+        if !result.stdout.isEmpty {
             print("Success: \(result)")
         }
     }
 
     func testJavaEnvironmentMannagerAddExample() async throws {
-        let env = JavaEnvironmentMannager()
-        try await env.add(url: URL(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home"))
+        let env = await JavaEnvironmentMannager()
+        _ = try await env.add(url: URL(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home"))
     }
 
     func testParse() async throws {
-        let result = try await ProcessUtil.execute(shell: "java -XshowSettings:properties -version")
-        XCTAssert(!result.hasError)
-        if result.hasError {
+        let result = try await ProcessUtil.execute(shell: "java -XshowSettings:properties -version").result.get()
+        XCTAssert(!result.stdout.isEmpty || !result.stderr.isEmpty)
+        if result.stdout.isEmpty && result.stderr.isEmpty {
             return
         }
-        let env = JavaEnvironment.parse(propertiesCmdOut: result.data)
+        let data = result.stdout + "\n" + result.stderr
+        print("output: \(data)")
+        let env = JavaEnvironment.parse(propertiesCmdOut: data)
         XCTAssert(env != nil)
         if env == nil {
             return

@@ -33,36 +33,22 @@ extension JavaEnvironment: Identifiable {
 enum JError: Error {
     case invalidURL
     case executeCmdError
+    case parseError
 }
 
 extension JavaEnvironmentMannager {
-    static let runtimeVersionCmd =
-        """
-        java -XshowSettings:properties -version 2>&1 | \
-          awk -F= '$1~"java.version " {sub(/^[ ]+/, "", $2); print $2}'
-        """
-    static let specificationVersionCmd =
-        """
-        java -XshowSettings:properties -version 2>&1 | \
-           awk -F= '$1~"java.vm.specification.version" {sub(/^[ ]+/, "", $2); print $2}'
-        """
-    static let vmNameCmd =
-        """
-        java -XshowSettings:properties -version 2>&1 | \
-           awk -F= '$1~"java.vm.name" {sub(/^[ ]+/, "", $2); print $2}'
-        """
     static let javaHomeCmd =
         """
         java -XshowSettings:properties -version 2>&1 | \
            awk -F= '$1~"java.home" {sub(/^[ ]+/, "", $2); print $2}'
         """
-
+    
     func detectCurrentJavaEnvironment() async throws -> JavaEnvironment? {
-        let result = try await ProcessUtil.execute(shell: JavaEnvironmentMannager.javaHomeCmd)
-        if result.hasError || result.data.isEmpty {
+        let result = try await ProcessUtil.execute(shell: JavaEnvironmentMannager.javaHomeCmd).result.get()
+        if result.stdout.isEmpty {
             return nil
         }
-        self.current = try await add(url: URL(fileURLWithPath: result.data))
+        self.current = try await add(url: URL(fileURLWithPath: result.stdout))
         return self.current
     }
 
@@ -71,28 +57,17 @@ extension JavaEnvironmentMannager {
         if !FileManager.default.fileExists(atPath: javaPath) {
             throw JError.invalidURL
         }
-
-        let rtVersionResult = try await ProcessUtil.execute(shell: javaPath + JavaEnvironmentMannager.runtimeVersionCmd)
-        if rtVersionResult.hasError || rtVersionResult.data.isEmpty {
+        
+        let result = try await ProcessUtil.execute(shell: javaPath + "java -XshowSettings:properties -version").result.get()
+        if result.stdout.isEmpty && result.stderr.isEmpty {
             throw JError.executeCmdError
         }
-
-        let specResult = try await ProcessUtil.execute(shell: javaPath + JavaEnvironmentMannager.specificationVersionCmd)
-        if specResult.hasError || rtVersionResult.data.isEmpty {
-            throw JError.executeCmdError
+        let data = result.stdout + "\n" + result.stderr
+        print("output: \(data)")
+        let env = JavaEnvironment.parse(propertiesCmdOut: data)
+        guard let env = env else {
+            throw JError.parseError
         }
-
-        let vmNameResult = try await ProcessUtil.execute(shell: javaPath + JavaEnvironmentMannager.specificationVersionCmd)
-        if vmNameResult.hasError || rtVersionResult.data.isEmpty {
-            throw JError.executeCmdError
-        }
-
-        let env = JavaEnvironment(home: url.path,
-                                  version: rtVersionResult.data.trimmingCharacters(in: .whitespacesAndNewlines),
-                                  specificationVersion: specResult.data.trimmingCharacters(in: .whitespacesAndNewlines),
-                                  vmName: vmNameResult.data.trimmingCharacters(in: .whitespacesAndNewlines),
-                                  rtName: ""
-        )
         all.append(env)
         return env
     }

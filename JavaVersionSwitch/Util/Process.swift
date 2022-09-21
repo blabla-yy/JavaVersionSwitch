@@ -8,50 +8,41 @@
 import Foundation
 
 struct ProcessResult {
-    let hasError: Bool
-    let data: String
+    let code: Int
+    let stdout: String
+    let stderr: String
 }
 
 struct ProcessUtil {
     static let zsh = URL(fileURLWithPath: "/bin/zsh")
-    
-    static func execute(shell: String) async throws -> ProcessResult {
-        let process = Process()
 
-        let stdout = Pipe()
-        let stderr = Pipe()
+    static func execute(shell: String) -> Task<ProcessResult, any Error> {
+        return Task.detached {
+            let process = Process()
 
-        process.standardOutput = stdout
-        process.standardError = stderr
-        process.executableURL = zsh
+            let stdout = Pipe()
+            let stderr = Pipe()
 
-        let arguments = ["-c", shell]
-        print("Arguments: \(arguments)")
-        process.arguments = arguments
+            process.standardOutput = stdout
+            process.standardError = stderr
+            process.executableURL = zsh
 
-        let outLine = stdout.fileHandleForReading.bytes.lines
-        let errorLine = stderr.fileHandleForReading.bytes.lines
+            let arguments = ["-c", shell]
+            print("Arguments: \(arguments)")
+            process.arguments = arguments
 
-        try process.run()
-        var outData = ""
-        var errorData = ""
+            try process.run()
+            process.waitUntilExit()
 
-        
-        for try await line in outLine {
-            outData += line
-        }
-        if process.isRunning {
-            for try await line in errorLine {
-                errorData += line
+            let outData = String(data: try stdout.fileHandleForReading.readToEnd() ?? .init(), encoding: .utf8) ?? ""
+            let errorData = String(data: try stderr.fileHandleForReading.readToEnd() ?? .init(), encoding: .utf8) ?? ""
+
+            if process.terminationStatus != 0 || !errorData.isEmpty {
+                Logger.shared.error("execute \(shell) has error, code: \(process.terminationStatus), stderr: \(errorData)")
             }
-        }
-        //TODO 部分错误这样没法获取
-        process.waitUntilExit()
-        if process.terminationStatus == 0 {
-            return ProcessResult(hasError: false, data: outData)
-        } else {
-            Logger.shared.error("execute \(shell) error, code: \(process.terminationStatus), stderr: \(errorData)")
-            return ProcessResult(hasError: true, data: errorData)
+            return ProcessResult(code: Int(process.terminationStatus),
+                                 stdout: outData.trimmingCharacters(in: .whitespacesAndNewlines),
+                                 stderr: errorData.trimmingCharacters(in: .whitespacesAndNewlines))
         }
     }
 }
