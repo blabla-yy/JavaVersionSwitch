@@ -10,23 +10,35 @@ import SwiftUI
 struct JavaEnvironmentView: View {
     let env: JavaEnvironment
     @State var isExpanded = false
+    @EnvironmentObject var manager: JavaEnvironmentMannager
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text(env.specificationVersion)
-                    .font(.title2)
+        HStack(spacing: 18) {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(env.specificationVersion)
+                        .font(.title)
+                    Spacer()
+                    VStack(alignment: .trailing) {
+                        Text("\(env.version)")
+                            .lineLimit(1)
+                        Text("\(env.rtName)")
+                            .lineLimit(1)
+                    }
+                }
             }
-
-            Form {
-                Text("java.version: \(env.version)")
-                Text("java.runtime.name: \(env.rtName)")
-            }
-            
+            Button(action: {
+                manager.current = env
+            }, label: {
+                Image(systemName: manager.current == env ? "record.circle" : "circle")
+                    //                .imageScale(.large)
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .scaledToFit()
+                    .foregroundColor(.green)
+            })
+            .buttonStyle(.plain)
         }
-//        .onTapGesture {
-//            isExpanded.toggle()
-//        }
     }
 }
 
@@ -36,13 +48,14 @@ struct JavaEnvironmentView_Previews: PreviewProvider {
         @State var selected = 1
         return
             List {
-                //            Picker(selection: $selected, label: Text("JDK")) {
-                JavaEnvironmentView(env: JavaEnvironment.mock).tag(1)
-                JavaEnvironmentView(env: JavaEnvironment.mock).tag(2)
-                JavaEnvironmentView(env: JavaEnvironment.mock).tag(3)
-                JavaEnvironmentView(env: JavaEnvironment.mock).tag(4)
-                //            }
-                //            .pickerStyle(.radioGroup)
+//                Picker(selection: $selected, label: Text("JDK")) {
+                ForEach(0 ..< 5) { i in
+                    JavaEnvironmentView(env: JavaEnvironment.mock).tag(i)
+                        .environmentObject(JavaEnvironmentMannager.mock)
+                    Divider()
+                }
+//                }
+//                .pickerStyle(.radioGroup)
             }
     }
 }

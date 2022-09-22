@@ -10,33 +10,13 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State var isTargeted = false
-    @ObservedObject private var manager = JavaEnvironmentMannager()
+    @StateObject private var manager = JavaEnvironmentMannager()
 
     var body: some View {
-        List {
-            Button("检测当前环境", action: detectCurrentEnvironment)
-            ForEach(manager.all) { item in
-                VStack {
-                    Text(item.version)
-                }
-                .frame(minHeight: 100)
-                .background(Color.red)
-                
-            }
-        }
-        .frame(minWidth: 200, minHeight: 400)
-        .onDrop(of: [.fileURL], isTargeted: $isTargeted, perform: self.dropDelegate)
-    }
-    
-    func detectCurrentEnvironment() {
-        Task {
-            do {
-                _ = try await manager.detectCurrentJavaEnvironment()
-            } catch {
-                Logger.shared.error("open file error, \(error.localizedDescription)")
-                return
-            }
-        }
+        MainView(manager: manager)
+            .environmentObject(manager)
+            .frame(minWidth: 200, minHeight: 400)
+            .onDrop(of: [.fileURL], isTargeted: $isTargeted, perform: self.dropDelegate)
     }
 
     func dropDelegate(_ providers: [NSItemProvider]) -> Bool {
