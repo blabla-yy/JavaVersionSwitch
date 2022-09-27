@@ -23,8 +23,8 @@ final class JavaVersionSwitchTests: XCTestCase {
         }
     }
 
-    func testJavaEnvironmentMannagerAddExample() async throws {
-        let env = await JavaEnvironmentMannager()
+    func testJavaEnvironmentManagerAddExample() async throws {
+        let env = await JavaEnvironmentManager()
         _ = try await env.add(url: URL(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home"))
     }
 

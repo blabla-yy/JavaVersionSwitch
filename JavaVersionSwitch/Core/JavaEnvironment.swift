@@ -8,39 +8,40 @@
 import Foundation
 import SwiftUI
 
-@MainActor
-class JavaEnvironmentMannager: ObservableObject {
-    @Published var current: JavaEnvironment?
-    @Published var all: [JavaEnvironment] = []
+//@MainActor
+//class JavaEnvironmentManager: ObservableObject {
+//    @Published var current: JavaEnvironment?
+//    @Published var all: [JavaEnvironment] = []
+//
+//
+//    static let mock: JavaEnvironmentManager = {
+//        let manager = JavaEnvironmentManager()
+////        manager.current = JavaEnvironment.mock
+////        manager.all = [JavaEnvironment.mock]
+//        return manager
+//    }()
+//}
 
-    static let mock: JavaEnvironmentMannager = {
-        let manager = JavaEnvironmentMannager()
-        manager.current = JavaEnvironment.mock
-        manager.all = [JavaEnvironment.mock]
-        return manager
-    }()
-}
+//struct JavaEnvironment {
+//    let home: String
+//    let version: String
+//    let specificationVersion: String
+//    let vmName: String
+//    let rtName: String
+//
+//    static let mock = JavaEnvironment(home: "/path", version: "1.8.0_202", specificationVersion: "1.8", vmName: "OpenJDK", rtName: "Java(TM) SE Runtime Environment")
+//}
 
-struct JavaEnvironment {
-    let home: String
-    let version: String
-    let specificationVersion: String
-    let vmName: String
-    let rtName: String
-
-    static let mock = JavaEnvironment(home: "/path", version: "1.8.0_202", specificationVersion: "1.8", vmName: "OpenJDK", rtName: "Java(TM) SE Runtime Environment")
-}
-
-extension JavaEnvironment: Identifiable, Equatable {
-    var id: String {
-        home
-    }
-
-    // 仅对比JavaHome即可
-    static func == (lhs: JavaEnvironment, rhs: JavaEnvironment) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
+//extension JavaEnvironment: Identifiable, Equatable {
+//    var id: String {
+//        home
+//    }
+//
+//    // 仅对比JavaHome即可
+//    static func == (lhs: JavaEnvironment, rhs: JavaEnvironment) -> Bool {
+//        return lhs.id == rhs.id
+//    }
+//}
 
 enum JError: Error {
     case invalidURL
@@ -48,7 +49,7 @@ enum JError: Error {
     case parseError
 }
 
-extension JavaEnvironmentMannager {
+extension JavaEnvironmentManager {
     static let javaHomeCmd =
         """
         java -XshowSettings:properties -version 2>&1 | \
@@ -56,7 +57,7 @@ extension JavaEnvironmentMannager {
         """
 
     func detectCurrentJavaEnvironment() async throws -> JavaEnvironment? {
-        let result = try await ProcessUtil.execute(shell: JavaEnvironmentMannager.javaHomeCmd).result.get()
+        let result = try await ProcessUtil.execute(shell: JavaEnvironmentManager.javaHomeCmd).result.get()
         if result.stdout.isEmpty {
             return nil
         }

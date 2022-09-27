@@ -10,7 +10,7 @@ import SwiftUI
 struct JavaEnvironmentView: View {
     let env: JavaEnvironment
     @State var isExpanded = false
-    @EnvironmentObject var manager: JavaEnvironmentMannager
+    @EnvironmentObject var manager: JavaEnvironmentManager
 
     var body: some View {
         HStack(spacing: 18) {
@@ -61,7 +61,7 @@ struct JavaEnvironmentView_Previews: PreviewProvider {
 //                Picker(selection: $selected, label: Text("JDK")) {
                 ForEach(0 ..< 5) { i in
                     JavaEnvironmentView(env: JavaEnvironment.mock).tag(i)
-                        .environmentObject(JavaEnvironmentMannager.mock)
+                        .environmentObject(JavaEnvironmentManager.mock)
                     Divider()
                 }
 //                }

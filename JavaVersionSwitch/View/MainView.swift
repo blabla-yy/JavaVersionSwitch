@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject var manager: JavaEnvironmentMannager
+    @StateObject var manager: JavaEnvironmentManager
     var body: some View {
         List {
             Section(content: {

@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State var isTargeted = false
-    @StateObject private var manager = JavaEnvironmentMannager()
+    @StateObject private var manager = JavaEnvironmentManager()
 
     var body: some View {
         MainView(manager: manager)
