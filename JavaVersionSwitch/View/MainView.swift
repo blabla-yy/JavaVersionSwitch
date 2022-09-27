@@ -28,9 +28,6 @@ struct MainView: View {
                 ForEach(manager.all, id: \.id) {
                     JavaEnvironmentView(env: $0)
                         .environmentObject(manager)
-//                    if manager.all.last != $0 {
-//                        Divider()
-//                    }
                 }
             }, header: {
                 HStack {

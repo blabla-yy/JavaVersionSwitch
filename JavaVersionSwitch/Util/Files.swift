@@ -31,13 +31,12 @@ struct Files {
         return filePaths
     }
 
-    static func createLink(target: String, source: String) throws {
-        
+    static func createLink(targetDir: String, sourceDir: String) throws {
         do {
-            let fileNames = try getFileNames(path: source)
+            let fileNames = try getFileNames(path: sourceDir)
 
             for fileName in fileNames {
-                try FileManager.default.createSymbolicLink(atPath: "\(target)/\(fileName)", withDestinationPath: "\(source)/\(fileName)")
+                try FileManager.default.createSymbolicLink(atPath: "\(targetDir)/\(fileName)", withDestinationPath: "\(sourceDir)/\(fileName)")
             }
         } catch {
             Logger.shared.error("createSymbolicLink error \(error.localizedDescription)")

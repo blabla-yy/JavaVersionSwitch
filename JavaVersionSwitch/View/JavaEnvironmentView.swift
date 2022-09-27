@@ -27,9 +27,7 @@ struct JavaEnvironmentView: View {
                     }
                 }
             }
-            Button(action: {
-                manager.current = env
-            }, label: {
+            Button(action: switchVersion, label: {
                 Image(systemName: manager.current == env ? "record.circle" : "circle")
                     //                .imageScale(.large)
                     .resizable()
@@ -38,6 +36,18 @@ struct JavaEnvironmentView: View {
                     .foregroundColor(.green)
             })
             .buttonStyle(.plain)
+        }
+    }
+
+    func switchVersion() {
+        Task {
+            let vs = VersionSwitch(source: env)
+            do {
+                try await vs.process()
+                manager.current = env
+            } catch {
+                Logger.shared.error("VersionSwitch process error \(error.localizedDescription)")
+            }
         }
     }
 }
