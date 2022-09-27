@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="22A5352e" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="JavaEnvironment" representedClassName="JavaEnvironment" syncable="YES" codeGenerationType="class">
+        <attribute name="createDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="home" optional="YES" attributeType="String"/>
         <attribute name="rtName" optional="YES" attributeType="String"/>
         <attribute name="specificationVersion" optional="YES" attributeType="String"/>
         <attribute name="version" optional="YES" attributeType="String"/>
         <attribute name="vmName" optional="YES" attributeType="String"/>
+        <relationship name="manager" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JavaEnvironmentManager" inverseName="all" inverseEntity="JavaEnvironmentManager"/>
     </entity>
     <entity name="JavaEnvironmentManager" representedClassName="JavaEnvironmentManager" syncable="YES" codeGenerationType="class">
-        <relationship name="all" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="JavaEnvironment"/>
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="all" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="JavaEnvironment" inverseName="manager" inverseEntity="JavaEnvironment"/>
         <relationship name="current" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JavaEnvironment"/>
     </entity>
-    <elements>
-        <element name="JavaEnvironment" positionX="-63" positionY="-18" width="128" height="14"/>
-        <element name="JavaEnvironmentManager" positionX="-63" positionY="-27" width="128" height="59"/>
-    </elements>
 </model>

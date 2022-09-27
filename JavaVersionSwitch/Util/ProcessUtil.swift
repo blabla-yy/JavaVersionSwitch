@@ -27,7 +27,7 @@ struct ProcessUtil {
             process.standardError = stderr
             process.executableURL = zsh
 
-            let arguments = ["-c", shell]
+            let arguments = ["-l", "-i", "-c", shell]
             print("Arguments: \(arguments)")
             process.arguments = arguments
 

@@ -10,16 +10,40 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State var isTargeted = false
-    @StateObject private var manager = JavaEnvironmentManager()
+
+    @FetchRequest(entity: JavaEnvironmentManager.entity(),
+                  sortDescriptors: [],
+                  predicate: NSPredicate(format: "id == %@", argumentArray: [JavaEnvironmentManager.singletonID]))
+    var manager: FetchedResults<JavaEnvironmentManager>
+    @Environment(\.managedObjectContext) var ctx
 
     var body: some View {
-        MainView(manager: manager)
-            .environmentObject(manager)
-            .frame(minWidth: 200, minHeight: 400)
-            .onDrop(of: [.fileURL], isTargeted: $isTargeted, perform: self.dropDelegate)
+        VStack {
+            if manager.first != nil {
+                MainView()
+                    .onDrop(of: [.fileURL], isTargeted: $isTargeted, perform: self.dropDelegate)
+            } else {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .onAppear(perform: createSingleton)
+            }
+        }
+        .frame(minWidth: 600, minHeight: 400)
+    }
+
+    func createSingleton() {
+        Task {
+            let singleton = JavaEnvironmentManager(context: ctx)
+            singleton.id = JavaEnvironmentManager.singletonID
+            singleton.all = NSSet()
+            _ = await ctx.saveAndLogError()
+        }
     }
 
     func dropDelegate(_ providers: [NSItemProvider]) -> Bool {
+        guard let manager = manager.first else {
+            return false
+        }
         Task {
             do {
                 for item in providers {
@@ -30,7 +54,8 @@ struct ContentView: View {
                         return
                     }
                     Logger.shared.info("add url: \(url)")
-                    _ = try await manager.add(url: url)
+                    _ = try await manager.add(url: url, context: ctx)
+                    _ = await ctx.saveAndLogError()
                 }
             } catch {
                 Logger.shared.error("open file error, \(error.localizedDescription)")

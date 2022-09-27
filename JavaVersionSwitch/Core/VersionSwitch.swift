@@ -18,19 +18,26 @@ struct VersionSwitch {
     }()
 
     func process() async throws {
-        if !FileManager.default.fileExists(atPath: source.home) || !FileManager.default.fileExists(atPath: source.home + "/bin") {
+        guard let sourceHome = source.home else {
             return
         }
-        // 第一次创建时
-        let _ = try await ProcessUtil.execute(shell: """
-        [ ! $JAVA_VERSION_SWITCH ] && echo '\nJAVA_VERSION_SWITCH="$HOME/.JavaVersionSwitch"\nexport PATH="$JAVA_VERSION_SWITCH/bin:$PATH"' >> $HOME/.zshrc
-        """)
-        .value
+        if !FileManager.default.fileExists(atPath: sourceHome) || !FileManager.default.fileExists(atPath: sourceHome + "/bin") {
+            return
+        }
+        if !FileManager.default.fileExists(atPath: VersionSwitch.envDir.path) {
+            try FileManager.default.createDirectory(at: VersionSwitch.envDir, withIntermediateDirectories: false)
+        }
         if FileManager.default.fileExists(atPath: VersionSwitch.targetDir.path) {
             try FileManager.default.removeItem(at: VersionSwitch.targetDir)
-            try FileManager.default.createDirectory(at: VersionSwitch.targetDir, withIntermediateDirectories: true)
         }
+        try FileManager.default.createDirectory(at: VersionSwitch.targetDir, withIntermediateDirectories: true)
 
-        try Files.createLink(targetDir: VersionSwitch.targetDir.path, sourceDir: source.home + "/bin")
+        // 第一次创建时
+        let _ = try await ProcessUtil.execute(shell: """
+        [ ! $JAVA_VERSION_SWITCH ] && echo '\nexport JAVA_VERSION_SWITCH="$HOME/.JavaVersionSwitch"\nexport PATH="$JAVA_VERSION_SWITCH/bin:$PATH"' >> $HOME/.zshrc
+        """)
+        .value
+        
+        try Files.createLink(targetDir: VersionSwitch.targetDir.path, sourceDir: sourceHome + "/bin")
     }
 }

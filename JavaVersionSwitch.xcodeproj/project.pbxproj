@@ -20,6 +20,7 @@
 		75D3E00A28DB113000BC3FC3 /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D3E00828DB052000BC3FC3 /* Files.swift */; };
 		75D3E00F28DB1FF400BC3FC3 /* JavaEnvironmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D3E00E28DB1FF400BC3FC3 /* JavaEnvironmentView.swift */; };
 		75D8E2A828DC795200F961FB /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D8E2A728DC795200F961FB /* MainView.swift */; };
+		F0D876E528E342840054AF4F /* CoreDataEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D876E428E342840054AF4F /* CoreDataEx.swift */; };
 		F0FFDD2A28D8B61000B033B7 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFDD2928D8B61000B033B7 /* Logger.swift */; };
 		F0FFDD2C28D8B6AC00B033B7 /* ProcessUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFDD2B28D8B6AC00B033B7 /* ProcessUtil.swift */; };
 		F0FFDD3428D8B6D900B033B7 /* JavaVersionSwitchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FFDD3328D8B6D900B033B7 /* JavaVersionSwitchTests.swift */; };
@@ -53,6 +54,7 @@
 		75D3E00828DB052000BC3FC3 /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		75D3E00E28DB1FF400BC3FC3 /* JavaEnvironmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaEnvironmentView.swift; sourceTree = "<group>"; };
 		75D8E2A728DC795200F961FB /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		F0D876E428E342840054AF4F /* CoreDataEx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataEx.swift; sourceTree = "<group>"; };
 		F0FFDD2928D8B61000B033B7 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		F0FFDD2B28D8B6AC00B033B7 /* ProcessUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessUtil.swift; sourceTree = "<group>"; };
 		F0FFDD3128D8B6D900B033B7 /* JavaVersionSwitchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JavaVersionSwitchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -145,6 +147,7 @@
 				F0FFDD2928D8B61000B033B7 /* Logger.swift */,
 				75D3E00828DB052000BC3FC3 /* Files.swift */,
 				F0FFDD2B28D8B6AC00B033B7 /* ProcessUtil.swift */,
+				F0D876E428E342840054AF4F /* CoreDataEx.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				7581E79A28D876EC0004FE0A /* Persistence.swift in Sources */,
 				75D8E2A828DC795200F961FB /* MainView.swift in Sources */,
 				F0FFDD2A28D8B61000B033B7 /* Logger.swift in Sources */,
+				F0D876E528E342840054AF4F /* CoreDataEx.swift in Sources */,
 				75D3E00928DB052000BC3FC3 /* Files.swift in Sources */,
 				757876CF28E3031F00C8C96B /* URLSelector.swift in Sources */,
 				7581E79328D876E90004FE0A /* ContentView.swift in Sources */,

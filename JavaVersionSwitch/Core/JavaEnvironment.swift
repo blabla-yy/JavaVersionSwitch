@@ -8,41 +8,6 @@
 import Foundation
 import SwiftUI
 
-//@MainActor
-//class JavaEnvironmentManager: ObservableObject {
-//    @Published var current: JavaEnvironment?
-//    @Published var all: [JavaEnvironment] = []
-//
-//
-//    static let mock: JavaEnvironmentManager = {
-//        let manager = JavaEnvironmentManager()
-////        manager.current = JavaEnvironment.mock
-////        manager.all = [JavaEnvironment.mock]
-//        return manager
-//    }()
-//}
-
-//struct JavaEnvironment {
-//    let home: String
-//    let version: String
-//    let specificationVersion: String
-//    let vmName: String
-//    let rtName: String
-//
-//    static let mock = JavaEnvironment(home: "/path", version: "1.8.0_202", specificationVersion: "1.8", vmName: "OpenJDK", rtName: "Java(TM) SE Runtime Environment")
-//}
-
-//extension JavaEnvironment: Identifiable, Equatable {
-//    var id: String {
-//        home
-//    }
-//
-//    // 仅对比JavaHome即可
-//    static func == (lhs: JavaEnvironment, rhs: JavaEnvironment) -> Bool {
-//        return lhs.id == rhs.id
-//    }
-//}
-
 enum JError: Error {
     case invalidURL
     case executeCmdError
@@ -50,45 +15,73 @@ enum JError: Error {
 }
 
 extension JavaEnvironmentManager {
+    static let singletonID: Int32 = 1
     static let javaHomeCmd =
         """
         java -XshowSettings:properties -version 2>&1 | \
            awk -F= '$1~"java.home" {sub(/^[ ]+/, "", $2); print $2}'
         """
 
-    func detectCurrentJavaEnvironment() async throws -> JavaEnvironment? {
+    func detectCurrentJavaEnvironment(context: NSManagedObjectContext) async throws -> Bool {
         let result = try await ProcessUtil.execute(shell: JavaEnvironmentManager.javaHomeCmd).result.get()
         if result.stdout.isEmpty {
-            return nil
+            return false
         }
-        current = try await add(url: URL(fileURLWithPath: result.stdout))
-        return current
+        current = try await add(url: URL(fileURLWithPath: result.stdout), context: context)
+        return await context.saveAndLogError()
     }
 
-    func add(url: URL) async throws -> JavaEnvironment {
-        let javaPath = url.path + "/bin/"
+    func add(url: URL, context: NSManagedObjectContext) async throws -> JavaEnvironment {
+        let javaPath = url.appendingPathComponent("/bin/").path
         if !FileManager.default.fileExists(atPath: javaPath) {
             throw JError.invalidURL
         }
 
-        let result = try await ProcessUtil.execute(shell: javaPath + "java -XshowSettings:properties -version").result.get()
+        let result = try await ProcessUtil.execute(shell: javaPath + "/java -XshowSettings:properties -version").result.get()
         if result.stdout.isEmpty && result.stderr.isEmpty {
             throw JError.executeCmdError
         }
         let data = result.stdout + "\n" + result.stderr
         print("output: \(data)")
+        let subContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        subContext.parent = context
         let env = JavaEnvironment.parse(propertiesCmdOut: data)
         guard let env = env else {
             throw JError.parseError
         }
-        all.append(env)
-        objectWillChange.send()
-        return env
+
+        if all == nil {
+            all = NSSet()
+        }
+        let found = all?.filter {
+            ($0 as! JavaEnvironment).home == env.home
+        }
+        if let exists = found?.first {
+            return exists as! JavaEnvironment
+        } else {
+            let envObject = JavaEnvironment(context: context)
+            envObject.home = env.home
+            envObject.rtName = env.rtName
+            envObject.vmName = env.vmName
+            envObject.specificationVersion = env.specificationVersion
+            envObject.version = env.version
+            envObject.manager = self
+            all?.adding(env)
+            return envObject
+        }
     }
 }
 
+fileprivate struct _JavaEnvironment {
+    let home: String
+    let version: String
+    let specificationVersion: String
+    let vmName: String
+    let rtName: String
+}
+
 extension JavaEnvironment {
-    static func parse(propertiesCmdOut: String) -> JavaEnvironment? {
+    fileprivate static func parse(propertiesCmdOut: String) -> _JavaEnvironment? {
         if propertiesCmdOut.isEmpty {
             return nil
         }
@@ -124,6 +117,6 @@ extension JavaEnvironment {
         if version.isEmpty || specificationVersion.isEmpty || home.isEmpty {
             return nil
         }
-        return JavaEnvironment(home: home, version: version, specificationVersion: specificationVersion, vmName: vmName, rtName: rtName)
+        return _JavaEnvironment(home: home, version: version, specificationVersion: specificationVersion, vmName: vmName, rtName: rtName)
     }
 }

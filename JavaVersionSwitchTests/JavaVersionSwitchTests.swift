@@ -23,26 +23,26 @@ final class JavaVersionSwitchTests: XCTestCase {
         }
     }
 
-    func testJavaEnvironmentManagerAddExample() async throws {
-        let env = await JavaEnvironmentManager()
-        _ = try await env.add(url: URL(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home"))
-    }
-
-    func testParse() async throws {
-        let result = try await ProcessUtil.execute(shell: "java -XshowSettings:properties -version").result.get()
-        XCTAssert(!result.stdout.isEmpty || !result.stderr.isEmpty)
-        if result.stdout.isEmpty && result.stderr.isEmpty {
-            return
-        }
-        let data = result.stdout + "\n" + result.stderr
-        print("output: \(data)")
-        let env = JavaEnvironment.parse(propertiesCmdOut: data)
-        XCTAssert(env != nil)
-        if env == nil {
-            return
-        }
-        print("env: \(env!)")
-    }
+//    func testJavaEnvironmentManagerAddExample() async throws {
+//        let env = await JavaEnvironmentManager()
+//        _ = try await env.add(url: URL(fileURLWithPath: "/opt/homebrew/Cellar/openjdk/18.0.2.1/libexec/openjdk.jdk/Contents/Home"))
+//    }
+//
+//    func testParse() async throws {
+//        let result = try await ProcessUtil.execute(shell: "java -XshowSettings:properties -version").result.get()
+//        XCTAssert(!result.stdout.isEmpty || !result.stderr.isEmpty)
+//        if result.stdout.isEmpty && result.stderr.isEmpty {
+//            return
+//        }
+//        let data = result.stdout + "\n" + result.stderr
+//        print("output: \(data)")
+//        let env = JavaEnvironment.parse(propertiesCmdOut: data)
+//        XCTAssert(env != nil)
+//        if env == nil {
+//            return
+//        }
+//        print("env: \(env!)")
+//    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
