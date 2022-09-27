@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		757876CF28E3031F00C8C96B /* URLSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757876CE28E3031F00C8C96B /* URLSelector.swift */; };
 		7581E79128D876E90004FE0A /* JavaVersionSwitchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7581E79028D876E90004FE0A /* JavaVersionSwitchApp.swift */; };
 		7581E79328D876E90004FE0A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7581E79228D876E90004FE0A /* ContentView.swift */; };
 		7581E79528D876EC0004FE0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7581E79428D876EC0004FE0A /* Assets.xcassets */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		757876CE28E3031F00C8C96B /* URLSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSelector.swift; sourceTree = "<group>"; };
 		7581E78D28D876E90004FE0A /* JavaVersionSwitch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JavaVersionSwitch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7581E79028D876E90004FE0A /* JavaVersionSwitchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaVersionSwitchApp.swift; sourceTree = "<group>"; };
 		7581E79228D876E90004FE0A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 			children = (
 				75D3E00E28DB1FF400BC3FC3 /* JavaEnvironmentView.swift */,
 				75D8E2A728DC795200F961FB /* MainView.swift */,
+				757876CE28E3031F00C8C96B /* URLSelector.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				75D8E2A828DC795200F961FB /* MainView.swift in Sources */,
 				F0FFDD2A28D8B61000B033B7 /* Log.swift in Sources */,
 				75D3E00928DB052000BC3FC3 /* Files.swift in Sources */,
+				757876CF28E3031F00C8C96B /* URLSelector.swift in Sources */,
 				7581E79328D876E90004FE0A /* ContentView.swift in Sources */,
 				7581E7A628D877480004FE0A /* JavaEnvironment.swift in Sources */,
 				7581E79128D876E90004FE0A /* JavaVersionSwitchApp.swift in Sources */,

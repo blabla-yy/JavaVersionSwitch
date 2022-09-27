@@ -11,16 +11,20 @@ struct MainView: View {
     @StateObject var manager: JavaEnvironmentMannager
     var body: some View {
         List {
-            Section("当前环境", content: {
+            Section(content: {
                 if manager.current != nil {
                     CurrentEnvironmentView(current: manager.current!)
                 } else {
-                    Text("")
+                    EmptyView()
+                }
+            }, header: {
+                HStack {
+                    Text("当前环境")
+                    Spacer()
+                    Button("检测当前环境", action: detectCurrentEnvironment)
                 }
             })
-            Button("检测当前环境", action: detectCurrentEnvironment)
-//            Divider()
-            Section("JDK") {
+            Section(content: {
                 ForEach(manager.all, id: \.id) {
                     JavaEnvironmentView(env: $0)
                         .environmentObject(manager)
@@ -28,8 +32,25 @@ struct MainView: View {
 //                        Divider()
 //                    }
                 }
-            }
+            }, header: {
+                HStack {
+                    Text("JDK")
+                    Spacer()
+                    Button("添加", action: openFile)
+                }
+            })
         }
+    }
+    
+    func openFile() {
+        URLSelector(type: .folder, select: { url, flag in
+            if let selected = url, flag {
+                Logger.shared.info("add url: \(selected)")
+                Task {
+                    _ = try await manager.add(url: selected)
+                }
+            }
+        }).selectModal()
     }
 
     func detectCurrentEnvironment() {
@@ -63,13 +84,16 @@ struct DetailTableData: Identifiable {
 struct CurrentEnvironmentView: View {
     var current: JavaEnvironment
     var body: some View {
-//        VStack {
-        Table(DetailTableData.parse(env: current), columns: {
-            TableColumn("", value: \.key)
-            TableColumn("", value: \.value)
-        })
-        .frame(height: 200)
-//        }
+        LazyVStack {
+            ForEach(DetailTableData.parse(env: current)) { item in
+                HStack {
+                    Text(item.key)
+                        .bold()
+                    Spacer()
+                    Text(item.value)
+                }
+            }
+        }
     }
 }
 
