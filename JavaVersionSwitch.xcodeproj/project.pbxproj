@@ -54,6 +54,8 @@
 		75D3E00828DB052000BC3FC3 /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		75D3E00E28DB1FF400BC3FC3 /* JavaEnvironmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaEnvironmentView.swift; sourceTree = "<group>"; };
 		75D8E2A728DC795200F961FB /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		F0CA0D7B28E40B4500E55849 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		F0CA0D7C28E40E4B00E55849 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot.png; sourceTree = "<group>"; };
 		F0D876E428E342840054AF4F /* CoreDataEx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataEx.swift; sourceTree = "<group>"; };
 		F0FFDD2928D8B61000B033B7 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		F0FFDD2B28D8B6AC00B033B7 /* ProcessUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessUtil.swift; sourceTree = "<group>"; };
@@ -82,6 +84,8 @@
 		7581E78428D876E90004FE0A = {
 			isa = PBXGroup;
 			children = (
+				F0CA0D7C28E40E4B00E55849 /* screenshot.png */,
+				F0CA0D7B28E40B4500E55849 /* README.md */,
 				7581E78F28D876E90004FE0A /* JavaVersionSwitch */,
 				F0FFDD3228D8B6D900B033B7 /* JavaVersionSwitchTests */,
 				7581E78E28D876E90004FE0A /* Products */,
@@ -431,11 +435,13 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.blabla.JavaVersionSwitch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -461,11 +467,13 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.blabla.JavaVersionSwitch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
