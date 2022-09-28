@@ -46,6 +46,7 @@ struct JavaEnvironmentView: View {
             do {
                 try await vs.process()
                 manager.current = env
+                env.is_current = manager
                 _ = await ctx.saveAndLogError()
             } catch {
                 Logger.shared.error("VersionSwitch process error \(error.localizedDescription)")

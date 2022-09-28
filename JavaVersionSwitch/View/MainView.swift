@@ -8,22 +8,19 @@
 import SwiftUI
 
 struct MainView: View {
-//    var manager: JavaEnvironmentManager
-//    var all: [JavaEnvironment]
-//    init(manager: JavaEnvironmentManager) {
-//        self.manager = manager
-//
-//        self.all = manager.all?.sortedArray(using: [.init(keyPath: \JavaEnvironment.createDate, ascending: false)]) as? [JavaEnvironment] ?? []
-//    }
     @FetchRequest(entity: JavaEnvironmentManager.entity(),
                   sortDescriptors: [],
                   predicate: NSPredicate(format: "id == %@", argumentArray: [JavaEnvironmentManager.singletonID]))
     var _manager: FetchedResults<JavaEnvironmentManager>
-    
+
     var manager: JavaEnvironmentManager {
         _manager.first!
     }
-    
+
+    var list: [JavaEnvironment] {
+        manager.all?.sortedArray(using: [.init(keyPath: \JavaEnvironment.createDate, ascending: false)]) as? [JavaEnvironment] ?? []
+    }
+
     @Environment(\.managedObjectContext) var ctx
     var body: some View {
         List {
@@ -41,10 +38,24 @@ struct MainView: View {
                 }
             })
             Section(content: {
-                ForEach(manager.all?.sortedArray(using: [.init(keyPath: \JavaEnvironment.createDate, ascending: false)]) as? [JavaEnvironment] ?? []) {
+                ForEach(self.list) {
                     JavaEnvironmentView(env: $0)
                         .environmentObject(manager)
                 }
+                .onDelete(perform: { index in
+                    Task {
+                        var hasChange = false
+                        for i in index {
+                            if list[i] != manager.current {
+                                ctx.delete(list[i])
+                                hasChange = true
+                            }
+                        }
+                        if hasChange {
+                            _ = await ctx.saveAndLogError()
+                        }
+                    }
+                })
             }, header: {
                 HStack {
                     Text("JDK")
@@ -54,7 +65,7 @@ struct MainView: View {
             })
         }
     }
-    
+
     func openFile() {
         URLSelector(type: .folder, select: { url, flag in
             if let selected = url, flag {
@@ -111,8 +122,8 @@ struct CurrentEnvironmentView: View {
     }
 }
 
-//struct MainView_Previews: PreviewProvider {
+// struct MainView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        MainView(manager: .mock)
 //    }
-//}
+// }
