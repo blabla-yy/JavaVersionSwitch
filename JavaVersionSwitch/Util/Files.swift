@@ -8,14 +8,19 @@
 import Foundation
 
 struct Files {
-    static func getFileNames(path: String) throws -> [String] {
+    static func getFileNames(path: String, includeDir: Bool = false) throws -> [String] {
         var filePaths = [String]()
         do {
             let array = try FileManager.default.contentsOfDirectory(atPath: path)
             for fileName in array {
+                if fileName == ".DS_Store" {
+                    continue
+                }
                 var isDir: ObjCBool = true
                 if FileManager.default.fileExists(atPath: "\(path)/\(fileName)", isDirectory: &isDir) {
-                    if !isDir.boolValue {
+                    if !includeDir && !isDir.boolValue {
+                        filePaths.append(fileName)
+                    } else if includeDir {
                         filePaths.append(fileName)
                     }
                 }

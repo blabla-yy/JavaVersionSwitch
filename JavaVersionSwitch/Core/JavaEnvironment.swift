@@ -28,13 +28,78 @@ extension JavaEnvironmentManager {
             return false
         }
         current = try await add(url: URL(fileURLWithPath: result.stdout), context: context)
-        return await context.saveAndLogError()
+        await context.saveAndLogError()
+        do {
+            try await findJDKInLibrary(context: context)
+        } catch  {
+            Logger.shared.error("error \(error.localizedDescription)")
+        }
+        do {
+            try await findJDKInHomeBrew(context: context)
+        } catch  {
+            Logger.shared.error("error \(error.localizedDescription)")
+        }
+        return true
+    }
+
+    func findJDKInLibrary(context: NSManagedObjectContext) async throws {
+        let baseURL = URL(fileURLWithPath: "/Library/Java/JavaVirtualMachines/")
+        let files = try Files.getFileNames(path: baseURL.path, includeDir: true)
+        if files.isEmpty {
+            return
+        }
+        for file in files {
+            let url = baseURL.appendingPathComponent("/\(file)/Contents/Home")
+            if FileManager.default.fileExists(atPath: url.path) {
+                Logger.shared.info("add \(url.path)")
+                _ = try await add(url: url, context: context)
+            }
+        }
+    }
+
+    func findJDKInHomeBrew(context: NSManagedObjectContext) async throws {
+        let cellarCMD = try await ProcessUtil.execute(shell: "brew --cellar").result.get()
+        if cellarCMD.stdout.isEmpty || cellarCMD.code != 0 {
+            return
+        }
+        let cellar = cellarCMD.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+        let baseURL = URL(fileURLWithPath: cellar)
+        if !FileManager.default.fileExists(atPath: baseURL.path) {
+            return
+        }
+        let files = try Files.getFileNames(path: baseURL.path, includeDir: true)
+        for file in files {
+            if !file.contains("jdk") {
+                continue
+            }
+            let url = baseURL.appendingPathComponent("/\(file)/")
+            Logger.shared.info("add \(url.path)")
+            if FileManager.default.fileExists(atPath: url.path) {
+                _ = try await add(url: url, context: context)
+            }
+        }
     }
 
     func add(url: URL, context: NSManagedObjectContext) async throws -> JavaEnvironment {
-        let javaPath = url.appendingPathComponent("/bin/").path
-        if !FileManager.default.fileExists(atPath: javaPath) {
+        if !FileManager.default.fileExists(atPath: url.path) {
             throw JError.invalidURL
+        }
+
+        var baseURL = url
+        var javaPath = baseURL.appendingPathComponent("/bin/").path
+        while !FileManager.default.fileExists(atPath: javaPath) {
+            let files = try Files.getFileNames(path: baseURL.path, includeDir: true)
+            print(files)
+            
+            if files.isEmpty {
+                throw JError.invalidURL
+            }
+            if files.count == 1 {
+                baseURL = baseURL.appendingPathComponent("/\(files.first!)")
+                javaPath = baseURL.appendingPathComponent("/bin/").path
+            } else {
+                throw JError.invalidURL
+            }
         }
 
         let result = try await ProcessUtil.execute(shell: javaPath + "/java -XshowSettings:properties -version").result.get()
