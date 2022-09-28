@@ -2,7 +2,7 @@
 macOS JDK版本切换GUI(SwiftUI)应用
 
 
-![Image text](https://raw.githubusercontent.com/blabla-yy/JavaVersionSwitch/main/screenshot.png)
+![image](https://github.com/blabla-yy/JavaVersionSwitch/blob/main/screenshot.png)
 
 ## 特点
 - 一键切换zsh Java环境
