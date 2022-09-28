@@ -28,7 +28,7 @@ extension JavaEnvironmentManager {
             return false
         }
         current = try await add(url: URL(fileURLWithPath: result.stdout), context: context)
-        await context.saveAndLogError()
+        _ = await context.saveAndLogError()
         do {
             try await findJDKInLibrary(context: context)
         } catch  {

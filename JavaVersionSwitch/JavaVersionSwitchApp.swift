@@ -9,11 +9,11 @@ import SwiftUI
 
 @main
 struct JavaVersionSwitchApp: App {
-//    #if DEBUG
-//    let persistenceController = PersistenceController.preview
-//    #else
+    #if DEBUG
+    let persistenceController = PersistenceController.preview
+    #else
     let persistenceController = PersistenceController.shared
-//    #endif
+    #endif
     
 
     var body: some Scene {
