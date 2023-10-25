@@ -22,21 +22,42 @@ extension JavaEnvironmentManager {
            awk -F= '$1~"java.home" {sub(/^[ ]+/, "", $2); print $2}'
         """
 
+    func clearNotExist(context: NSManagedObjectContext) async {
+        let request = JavaEnvironment.fetchRequest()
+        let result = try? context.fetch(request)
+        for item in result ?? [] {
+            let delete: Bool
+            if let home = item.home {
+                var isDirectory: ObjCBool = false
+                FileManager.default.fileExists(atPath: home, isDirectory: &isDirectory)
+                delete = !isDirectory.boolValue
+            } else {
+                delete = true
+            }
+            if delete {
+                Logger.shared.info("delete record \(item.home ?? "")")
+                context.delete(item)
+            }
+        }
+        _ = await context.saveAndLogError()
+    }
+
     func detectCurrentJavaEnvironment(context: NSManagedObjectContext) async throws -> Bool {
         let result = try await ProcessUtil.execute(shell: JavaEnvironmentManager.javaHomeCmd).result.get()
         if result.stdout.isEmpty {
             return false
         }
+        await clearNotExist(context: context)
         current = try await add(url: URL(fileURLWithPath: result.stdout), context: context)
         _ = await context.saveAndLogError()
         do {
             try await findJDKInLibrary(context: context)
-        } catch  {
+        } catch {
             Logger.shared.error("error \(error.localizedDescription)")
         }
         do {
             try await findJDKInHomeBrew(context: context)
-        } catch  {
+        } catch {
             Logger.shared.error("error \(error.localizedDescription)")
         }
         return true
@@ -90,7 +111,7 @@ extension JavaEnvironmentManager {
         while !FileManager.default.fileExists(atPath: javaPath) {
             let files = try Files.getFileNames(path: baseURL.path, includeDir: true)
             print(files)
-            
+
             if files.isEmpty {
                 throw JError.invalidURL
             }

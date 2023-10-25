@@ -64,6 +64,7 @@ struct MainView: View {
                 }
             })
         }
+        .onAppear(perform: detectCurrentEnvironment)
     }
 
     func openFile() {
